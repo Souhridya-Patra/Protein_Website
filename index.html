@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Secondary Structure Prediction</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* Keep the existing CSS from the context */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Protein Secondary Structure Prediction</h1>
+        <div class="input-section">
+            <h3>Enter Protein Sequence:</h3>
+            <textarea id="sequenceInput" placeholder="Enter protein sequence here..."></textarea>
+            <button class="btn" onclick="predictStructure()">Predict Structure</button>
+        </div>
+        <div class="results" id="results" style="display: none;">
+            <h3>Results:</h3>
+            <div id="sequenceLength"></div>
+            <div id="predictionResult"></div>
+            <div id="structureStats"></div>
+            <div id="plotDiv"></div>
+        </div>
+    </div>
+
+    <script>
+        async function predictStructure() {
+            const sequence = document.getElementById('sequenceInput').value.toUpperCase().trim();
+            if (!sequence) {
+                alert('Please enter a protein sequence');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ sequence: sequence })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Prediction failed');
+                }
+
+                const data = await response.json();
+                displayResults(sequence, data.prediction, data.statistics);
+                document.getElementById('results').style.display = 'block';
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Keep the existing displayResults function from the context
+    </script>
+</body>
+</html>
